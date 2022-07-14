@@ -8,6 +8,8 @@
 radius = 2.0
 
 [node name="PlayerCannone" instance=ExtResource( 2 )]
+collision_layer = 8
+collision_mask = 13
 script = ExtResource( 1 )
 speed = 750
 damage = 10

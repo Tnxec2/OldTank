@@ -52,7 +52,7 @@ animations = [ {
 
 [node name="Bomb" type="Area2D"]
 collision_layer = 8
-collision_mask = 6
+collision_mask = 14
 script = ExtResource( 1 )
 damage = 50
 
