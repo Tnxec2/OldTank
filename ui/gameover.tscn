@@ -1,0 +1,82 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://ui/buttons_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/button_square_9.png" type="Texture" id=2]
+[ext_resource path="res://assets/button_round_9.png" type="Texture" id=3]
+[ext_resource path="res://ui/gameover.gd" type="Script" id=4]
+
+[node name="GameOver" type="CanvasLayer"]
+script = ExtResource( 4 )
+
+[node name="Box" type="NinePatchRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -50.0
+margin_top = -40.0
+margin_right = 50.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 100, 80 )
+texture = ExtResource( 2 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Box"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -31.5
+margin_top = -20.0
+margin_right = 31.5
+margin_bottom = 20.0
+custom_constants/separation = 8
+
+[node name="GameOver" type="MarginContainer" parent="Box/VBoxContainer"]
+margin_right = 63.0
+margin_bottom = 13.0
+
+[node name="Label" type="Label" parent="Box/VBoxContainer/GameOver"]
+margin_right = 63.0
+margin_bottom = 13.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "Game Over"
+
+[node name="NewGame" type="MarginContainer" parent="Box/VBoxContainer"]
+margin_top = 21.0
+margin_right = 63.0
+margin_bottom = 37.0
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Box/VBoxContainer/NewGame"]
+margin_right = 63.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 40, 16 )
+texture = ExtResource( 3 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="NewGameButton" type="TextureButton" parent="Box/VBoxContainer/NewGame/NinePatchRect"]
+margin_right = 63.0
+margin_bottom = 16.0
+
+[node name="Label" type="Label" parent="Box/VBoxContainer/NewGame/NinePatchRect"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -27.5
+margin_top = -6.0
+margin_right = 28.5
+margin_bottom = 7.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "New Game"
+
+[connection signal="pressed" from="Box/VBoxContainer/NewGame/NinePatchRect/NewGameButton" to="." method="_on_NewGameButton_pressed"]
+[connection signal="pressed" from="Box/VBoxContainer/NewGame/NinePatchRect/NewGameButton" to="." method="_on_TextureButton_pressed"]

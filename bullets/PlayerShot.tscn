@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/textures/bullets.png" type="Texture" id=1]
+[ext_resource path="res://bullets/Bullet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://bullets/PlayerShot.gd" type="Script" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 1.41421
+
+[node name="PlayerShot" instance=ExtResource( 2 )]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource( 3 )
+speed = 750
+damage = 1
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 4, 4 )
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource( 1 )
+
+[node name="LifeTime" parent="." index="2"]
+wait_time = 0.5
