@@ -13,10 +13,14 @@ func explode():
 	$Sprite.hide()
 	$Explosion.show()
 	$Explosion.play("smoke")
+	
+func take_damage():
+	explode()
 
 func _on_Bomb_body_entered(body):
 	if onFire:
 		explode()
+		print("_on_Bomb_body_entered: ", body)
 		if body.has_method('take_damage'):
 			body.take_damage(damage)
 

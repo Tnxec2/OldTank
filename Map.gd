@@ -1,7 +1,10 @@
 extends Node2D
 
-signal clicked(position)
+signal clicked(position, bulletType)
 signal swipedTo(vector)
+signal change_bullet_type(bulletType)
+
+var enemy_tank = preload("res://tank/EnemyTank.tscn")
 
 signal set_bomb
 signal change_killed_enemys
@@ -18,17 +21,17 @@ var map_size = Vector2.ZERO
 var killed_enemys = 0
 var game_over = false
 
-enum BulletType {
-	SHOT,
-	CANNON,
-	MISSILE
-}
+var currentBulletType = 0
+
+var rand = RandomNumberGenerator.new()
 
 func _ready():
 	get_map_size()
 	set_camera_limits()
 	$Player.position =  Vector2(map_size.x/2, map_size.y/2)
 	emit_signal("change_killed_enemys", killed_enemys)
+	emit_signal("change_bullet_type", currentBulletType)
+	spawn_enemys()
 
 func get_map_size():
 	var map_limits = $Ground.get_used_rect()
@@ -45,6 +48,41 @@ func set_camera_limits():
 	$Player/Camera2D.limit_top = limits[2]
 	$Player/Camera2D.limit_bottom = limits[3]
 
+func spawn_enemys():
+	for i in range(0,10):
+		respawn_enemy()
+	
+func respawn_enemy():
+	var enemy = enemy_tank.instance()
+	rand.randomize()
+	var x = rand.randf_range(10,map_size.x-10)
+	rand.randomize()
+	var y = rand.randf_range(10,map_size.y-10)
+	enemy.position = Vector2(x, y)
+	enemy.limits = limits
+	enemy.connect("died", self, "_on_EnemyTank_died")
+	enemy.connect("shoot", self, "_on_EnemyTank_shoot")
+	enemy.set_player($Player)
+	add_child(enemy)
+
+func _on_EnemyTank_died():
+	killed_enemys -= 1
+	emit_signal("change_killed_enemys", killed_enemys)
+	
+func _on_EnemyTank_shoot(bullet, _position, _direction, _target=null):
+	var b = bullet.instance()
+	add_child(b)
+	b.start(_position, _direction, _target)
+
+#func respawn_tree():
+#	var tree = tree_scene.instance()
+#	rand.randomize()
+#	var x = rand.randf_range(0,map_size.x)
+#	rand.randomize()
+#	var y = rand.randf_range(0,map_size.y)
+#	tree.position.y = y
+#	tree.position.x = x
+#	add_child(tree)
 
 # func _unhandled_input(event):
 func _unhandled_input(event):
@@ -61,7 +99,7 @@ func _unhandled_input(event):
 				PP = (s2 - s1).normalized()  # obtain the movement vector 
 				emit_signal("swipedTo", PP)
 			else:
-				emit_signal("clicked", s2)
+				emit_signal("clicked", s2, currentBulletType)
 	elif event is InputEventMouseMotion:
 		#print("Mouse Motion at: ", event.position)
 		pass
@@ -78,15 +116,24 @@ func _on_HUD_bomb_pressed():
 
 func _on_HUD_cannon_pressed():
 	if !game_over:
-		print('_on_Buttons_cannon_pressed')
+		if $Player.cannone_count > 0:
+			currentBulletType = 1
+		else:
+			currentBulletType = 0
+		emit_signal("change_bullet_type", currentBulletType)
 
 func _on_HUD_shot_pressed():
 	if !game_over:
-		print('_on_Buttons_shot_pressed')
+		currentBulletType = 0
+		emit_signal("change_bullet_type", currentBulletType)
 
 func _on_HUD_missile_pressed():
 	if !game_over:
-		print('_on_Buttons_missile_pressed')
+		if $Player.missile_count > 0:
+			currentBulletType = 2
+		else:
+			currentBulletType = 0
+		emit_signal("change_bullet_type", currentBulletType)
 
 func _on_Player_set_bomb(bomb, _position):
 	var b = bomb.instance()

@@ -29,14 +29,14 @@ func _process(delta):
 
 func explode():
 	set_process(false)
-	velocity = Vector2()
+	velocity = Vector2.ZERO
 	$Sprite.hide()
 	$Explosion.show()
 	$Explosion.play()
 
 func _on_Bullet_body_entered(body):
-	print("_on_Bullet_body_entered")
-	print(body)
+	print("_on_Bullet_body_entered: ", body)
+	position = body.position
 	explode()
 	if body.has_method('take_damage'):
 		body.take_damage(damage)
