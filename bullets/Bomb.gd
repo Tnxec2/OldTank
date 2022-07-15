@@ -1,4 +1,4 @@
-extends Area2D
+extends StaticBody2D
 
 export (int) var damage
 
@@ -14,7 +14,7 @@ func explode():
 	$Explosion.show()
 	$Explosion.play("smoke")
 	
-func take_damage():
+func take_damage(damage: int):
 	explode()
 
 func _on_Bomb_body_entered(body):

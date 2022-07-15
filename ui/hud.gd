@@ -5,8 +5,8 @@ signal shot_pressed
 signal cannon_pressed
 signal missile_pressed
 
-var button_selected = preload("res://assets/button_square_9_selected.png")
-var button_normal = preload("res://assets/button_square_9.png")
+var button_selected = preload("res://assets/ui/button_square_9_selected.png")
+var button_normal = preload("res://assets/ui/button_square_9.png")
 
 func _on_VBoxContainer_bomb_pressed():
 	emit_signal("bomb_pressed")

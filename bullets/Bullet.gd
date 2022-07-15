@@ -20,7 +20,7 @@ func seek():
 	return steer
 
 func _process(delta):
-	if target:
+	if target != null:
 		acceleration += seek()
 		velocity += acceleration * delta
 		velocity = velocity.clamped(speed)
@@ -35,12 +35,16 @@ func explode():
 	$Explosion.play()
 
 func _on_Bullet_body_entered(body):
+	$CollisionShape2D.disabled = true
 	print("_on_Bullet_body_entered: ", body)
 	position = body.position
 	explode()
 	if body.has_method('take_damage'):
 		body.take_damage(damage)
 
+func take_damage(damage):
+	explode()
+	
 func _on_Explosion_animation_finished():
 	queue_free()
 

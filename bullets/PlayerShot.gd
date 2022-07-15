@@ -1,2 +1,2 @@
-extends "res://bullets/Shot.gd"
+extends "res://bullets/Bullet.gd"
 
