@@ -11,3 +11,7 @@ func _on_Pickup_body_entered(body):
 	if body.has_method('put_pickup'):
 		body.put_pickup(type, amount)
 	queue_free()
+
+
+func _on_EraseTimer_timeout():
+	queue_free()
