@@ -50,9 +50,9 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[node name="Bomb" type="StaticBody2D"]
+[node name="Bomb" type="Area2D"]
 collision_layer = 8
-collision_mask = 14
+collision_mask = 38
 script = ExtResource( 1 )
 damage = 50
 
@@ -70,5 +70,6 @@ speed_scale = 2.0
 [node name="StartTimer" type="Timer" parent="."]
 one_shot = true
 
+[connection signal="body_entered" from="." to="." method="_on_Bomb_body_entered"]
 [connection signal="animation_finished" from="Explosion" to="." method="_on_Explosion_animation_finished"]
 [connection signal="timeout" from="StartTimer" to="." method="_on_StartTimer_timeout"]

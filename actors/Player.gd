@@ -74,6 +74,7 @@ func put_pickup(type: int, amount: int):
 	match(type):
 		PickupTypes.Health:
 			health += amount
+			health = clamp(health, 0, 100)
 			emit_signal("health_changed", health)
 		PickupTypes.Bomb:
 			bomb_count += amount

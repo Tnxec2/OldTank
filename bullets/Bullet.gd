@@ -8,6 +8,8 @@ var velocity = Vector2()
 var acceleration = Vector2()
 var target = null
 
+var isEnemyBullet = false
+
 func start(_position, _direction, _target=null):
 	position = _position
 	rotation = _direction.angle()
@@ -40,6 +42,9 @@ func _on_Bullet_body_entered(body):
 	position = body.position
 	explode()
 	if body.has_method('take_damage'):
+		if isEnemyBullet:
+			if body.is_in_group('trucks') || body.is_in_group('walls'):
+				return
 		body.take_damage(damage)
 
 func take_damage(damage):

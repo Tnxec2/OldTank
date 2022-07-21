@@ -60,14 +60,14 @@ func set_camera_limits():
 	$Player/Camera2D.limit_bottom = limits[3]
 
 func spawn_objects():
-	var hill_amount = map_size.x * map_size.y / 5000
+	var hill_amount = map_size.x * map_size.y / 50000
 	for i in range(0, hill_amount):
 		var h = hill.instance()
 		var x = rand.randf_range(10,map_size.x-10)
 		var y = rand.randf_range(10,map_size.y-10)
 		h.position = Vector2(x, y)
 		add_child(h)
-	var tree_amount = map_size.x * map_size.y / 5000
+	var tree_amount = map_size.x * map_size.y / 50000
 	for i in range(0, tree_amount):
 		var h = tree.instance()
 		var x = rand.randf_range(10,map_size.x-10)

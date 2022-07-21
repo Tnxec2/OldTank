@@ -13,4 +13,4 @@ cell_size = Vector2( 16, 16 )
 cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
 format = 1
 script = ExtResource( 4 )
-map_size = 20
+map_size = 40
