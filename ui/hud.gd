@@ -35,10 +35,6 @@ func _on_Player_health_changed(value: int):
 	$Control/VBoxContainer/LifeContainer/Control/LifeIcon/Label.text = str(value)
 
 
-func _on_Map_change_killed_enemys(value: int):
-	$Control/VBoxContainer/EnemysContainer/Control/EnemysIcon/Label.text = str(value)
-
-
 func _on_Map_change_bullet_type(bulletType):
 	$Control/VBoxContainer/ShotContainer/Background.texture = button_normal
 	$Control/VBoxContainer/CannonContainer/Background.texture = button_normal
@@ -49,3 +45,8 @@ func _on_Map_change_bullet_type(bulletType):
 		$Control/VBoxContainer/CannonContainer/Background.texture = button_selected
 	else:
 		$Control/VBoxContainer/ShotContainer/Background.texture = button_selected
+
+
+func _on_Map_change_count_enemys(countEnemys):
+	$Control/VBoxContainer/EnemysContainer/Control/EnemysIcon/Label.text = str(countEnemys)
+	

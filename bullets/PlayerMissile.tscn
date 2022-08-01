@@ -9,10 +9,11 @@ radius = 3.0
 
 [node name="PlayerMissile" instance=ExtResource( 2 )]
 collision_layer = 8
-collision_mask = 61
+collision_mask = 125
 script = ExtResource( 3 )
 speed = 200
 damage = 30
+steer_force = 50.0
 
 [node name="Sprite" parent="." index="0"]
 texture = ExtResource( 1 )
@@ -21,3 +22,6 @@ region_rect = Rect2( 11, 0, 6, 5 )
 
 [node name="CollisionShape2D" parent="." index="1"]
 shape = SubResource( 1 )
+
+[node name="LifeTime" parent="." index="2"]
+wait_time = 4.0

@@ -1,3 +1,4 @@
+class_name Player
 extends "res://actors/Tank.gd"
 
 const TURRET_ROTATE_BACK_DELAY = 1
@@ -19,6 +20,7 @@ signal set_bomb
 signal change_cannon_count
 signal change_missile_count
 signal change_killed_enemys
+signal flag_picked
 
 func _ready():
 	emit_signal("change_bomb_count", bomb_count)
@@ -38,7 +40,7 @@ func drive_to(target_vector: Vector2) -> void:
 	look_at(position+target_vector)
 	velocity = target_vector * speed
 
-func shot_to(position: Vector2, bulletType: int):
+func shot_to(position: Vector2, bulletType: int, target: Node2D = null):
 	turret_rotate_timer = TURRET_ROTATE_BACK_DELAY
 	$Turret.look_at(position)
 	var dir = Vector2(1, 0).rotated($Turret.global_rotation)
@@ -51,17 +53,13 @@ func shot_to(position: Vector2, bulletType: int):
 				emit_signal("change_cannon_count", cannone_count)
 				emit_signal('shoot', Cannone, $Turret/Muzzle.global_position, dir)
 		2:
-			if missile_count > 0:
+			if can_shoot && missile_count > 0:
+				can_shoot = false
+				$GunTimer.start()
 				missile_count -= 1
 				emit_signal("change_missile_count", missile_count)
-				emit_signal('shoot', Missile, $Turret/Muzzle.global_position, dir)
+				emit_signal('shoot', Missile, $Turret/Muzzle.global_position, dir, target)
 	
-func _on_Map_swipedTo(vector):
-	drive_to(vector)
-
-func _on_Map_clicked(position, bulletType):
-	shot_to(position, bulletType)
-
 func setBomb():
 	if bomb_count <= 0:
 		return
@@ -85,5 +83,8 @@ func put_pickup(type: int, amount: int):
 		PickupTypes.Missile:
 			missile_count += amount
 			emit_signal("change_missile_count", missile_count)
+		PickupTypes.Flag:
+			emit_signal("flag_picked")
 		_:
 			print("Put unknown pickup, type: ", type, ", amount: ", amount)
+	

@@ -23,9 +23,11 @@ func _ready():
 	emit_signal("health_changed", health)
 	$GunTimer.wait_time = gun_cooldown
 
+
 func control(delta):
 	pass
-	
+
+
 func shoot(num, spread, target=null):
 	if alive && can_shoot:
 		can_shoot = false
@@ -38,24 +40,30 @@ func shoot(num, spread, target=null):
 		else:
 			emit_signal('shoot', Bullet, $Turret/Muzzle.global_position, dir, target)
 
+
 func _physics_process(delta):
 	if not alive:
 		return
 	control(delta)
 	move_and_slide(velocity)
 
+
 func take_damage(amount):
+	if !alive:
+		return
 	health -= amount
 	health = max(health, 0)
 	emit_signal('health_changed', health * 100/max_health)
 	if health <= 0:
 		explode()
 
+
 func heal(amount):
 	health += amount
 	health = clamp(health, 0, max_health)
 	emit_signal('health_changed', health * 100/max_health)
 	
+
 func explode():
 	$CollisionShape2D.disabled = true
 	alive = false
@@ -65,8 +73,11 @@ func explode():
 	$Explosion.play()
 	emit_signal('dead')
 
+
 func _on_GunTimer_timeout():
 	can_shoot = true
 
+
 func _on_Explosion_animation_finished():
 	queue_free()
+

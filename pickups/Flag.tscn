@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://pickups/Pickup.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/textures/pickup_flag.png" type="Texture" id=2]
+[ext_resource path="res://pickups/Flag.gd" type="Script" id=3]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 8, 8 )
+
+[node name="Flag" instance=ExtResource( 1 )]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource( 3 )
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource( 1 )
+
+[node name="EraseTimer" parent="." index="2"]
+one_shot = false
+autostart = false

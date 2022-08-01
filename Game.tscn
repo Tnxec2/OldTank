@@ -12,12 +12,13 @@ script = ExtResource( 3 )
 [node name="Map" parent="." instance=ExtResource( 1 )]
 
 [node name="Player" parent="Map" instance=ExtResource( 4 )]
+missile_count = 150
 
 [node name="StartPosition" type="Position2D" parent="Map"]
 position = Vector2( 10, 10 )
 
 [node name="TruckTimer" type="Timer" parent="Map"]
-wait_time = 5.0
+wait_time = 10.0
 autostart = true
 
 [node name="HUD" parent="." instance=ExtResource( 2 )]
@@ -25,14 +26,13 @@ autostart = true
 [node name="GameOver" parent="." instance=ExtResource( 5 )]
 
 [connection signal="change_bullet_type" from="Map" to="HUD" method="_on_Map_change_bullet_type"]
-[connection signal="change_killed_enemys" from="Map" to="HUD" method="_on_Map_change_killed_enemys"]
-[connection signal="clicked" from="Map" to="Map/Player" method="_on_Map_clicked"]
+[connection signal="change_count_enemys" from="Map" to="HUD" method="_on_Map_change_count_enemys"]
 [connection signal="game_over" from="Map" to="." method="_on_Map_game_over"]
-[connection signal="swipedTo" from="Map" to="Map/Player" method="_on_Map_swipedTo"]
 [connection signal="change_bomb_count" from="Map/Player" to="HUD" method="_on_Player_change_bomb_count"]
 [connection signal="change_cannon_count" from="Map/Player" to="HUD" method="_on_Player_change_cannon_count"]
 [connection signal="change_missile_count" from="Map/Player" to="HUD" method="_on_Player_change_missile_count"]
 [connection signal="dead" from="Map/Player" to="Map" method="_on_Player_dead"]
+[connection signal="flag_picked" from="Map/Player" to="Map" method="_on_Player_flag_picked"]
 [connection signal="health_changed" from="Map/Player" to="HUD" method="_on_Player_health_changed"]
 [connection signal="set_bomb" from="Map/Player" to="Map" method="_on_Player_set_bomb"]
 [connection signal="shoot" from="Map/Player" to="Map" method="_on_Player_shoot"]

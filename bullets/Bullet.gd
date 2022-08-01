@@ -16,18 +16,21 @@ func start(_position, _direction, _target=null):
 	velocity = _direction * speed
 	target = _target
 
+
 func seek():
 	var desired = (target.position - position).normalized() * speed
 	var steer = (desired - velocity).normalized() * steer_force
 	return steer
 
+
 func _process(delta):
-	if target != null:
+	if target != null &&is_instance_valid(target):
 		acceleration += seek()
 		velocity += acceleration * delta
 		velocity = velocity.clamped(speed)
 		rotation = velocity.angle()
 	position += velocity * delta	
+
 
 func explode():
 	set_process(false)
@@ -36,10 +39,11 @@ func explode():
 	$Explosion.show()
 	$Explosion.play()
 
+
 func _on_Bullet_body_entered(body):
 	$CollisionShape2D.disabled = true
-	print("_on_Bullet_body_entered: ", body)
-	position = body.position
+	#print("_on_Bullet_body_entered: ", body)
+	position = body.global_position
 	explode()
 	if body.has_method('take_damage'):
 		if isEnemyBullet:
@@ -47,12 +51,13 @@ func _on_Bullet_body_entered(body):
 				return
 		body.take_damage(damage)
 
+
 func take_damage(damage):
 	explode()
+	
 	
 func _on_Explosion_animation_finished():
 	queue_free()
 
 func _on_LifeTime_timeout():
-	# explode()
 	queue_free()

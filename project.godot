@@ -8,6 +8,28 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "",
+"class": "GitAPI",
+"language": "NativeScript",
+"path": "res://addons/godot-git-plugin/git_api.gdns"
+}, {
+"base": "KinematicBody2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://actors/Player.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Truck",
+"language": "GDScript",
+"path": "res://actors/Truck.gd"
+} ]
+_global_script_class_icons={
+"GitAPI": "",
+"Player": "",
+"Truck": ""
+}
+
 [application]
 
 config/name="OldTank"
@@ -16,8 +38,16 @@ config/icon="res://assets/icon.png"
 
 [display]
 
+window/size/width=480
+window/size/height=240
+window/size/test_width=960
+window/size/test_height=480
 window/stretch/mode="2d"
-window/stretch/aspect="keep_width"
+window/stretch/aspect="keep"
+
+[gdnative]
+
+singletons=[ "res://addons/godot-git-plugin/git_api.gdnlib" ]
 
 [input]
 
@@ -54,6 +84,7 @@ pointing/emulate_touch_from_mouse=true
 2d_physics/layer_4="bullets"
 2d_physics/layer_5="objects"
 2d_physics/layer_6="trucks"
+2d_physics/layer_7="fort"
 
 [physics]
 

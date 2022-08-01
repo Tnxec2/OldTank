@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://actors/Tank.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/textures/enemy_body.png" type="Texture" id=2]
@@ -6,19 +6,29 @@
 [ext_resource path="res://actors/EnemyTank.gd" type="Script" id=4]
 [ext_resource path="res://bullets/EnemyTankBullet.tscn" type="PackedScene" id=5]
 
+[sub_resource type="CircleShape2D" id=1]
+radius = 7.07107
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 100.0
+
 [node name="EnemyTank" instance=ExtResource( 1 )]
 collision_layer = 4
-collision_mask = 55
+collision_mask = 247
+input_pickable = true
 script = ExtResource( 4 )
 Bullet = ExtResource( 5 )
-speed = 40
+speed = 30
 gun_cooldown = 0.5
 max_health = 50
 turret_speed = 1.0
-detect_radius = 200
+detect_radius = 100
 
 [node name="Body" parent="." index="0"]
 texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource( 1 )
 
 [node name="Turret" parent="." index="3"]
 texture = ExtResource( 3 )
@@ -31,6 +41,12 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectRadius" index="0"]
+shape = SubResource( 2 )
 
+[node name="StuckTimer" type="Timer" parent="." index="6"]
+autostart = true
+
+[connection signal="input_event" from="." to="." method="_on_EnemyTank_input_event"]
 [connection signal="body_entered" from="DetectRadius" to="." method="_on_DetectRadius_body_entered"]
 [connection signal="body_exited" from="DetectRadius" to="." method="_on_DetectRadius_body_exited"]
+[connection signal="timeout" from="StuckTimer" to="." method="_on_StuckTimer_timeout"]
