@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://assets/textures/player_turret.png" type="Texture" id=1]
 [ext_resource path="res://actors/Tank.tscn" type="PackedScene" id=2]
@@ -8,6 +8,8 @@
 [ext_resource path="res://bullets/PlayerMissile.tscn" type="PackedScene" id=6]
 [ext_resource path="res://bullets/PlayerShot.tscn" type="PackedScene" id=7]
 [ext_resource path="res://bullets/PlayerCannone.tscn" type="PackedScene" id=8]
+[ext_resource path="res://assets/sounds/hitHurt.wav" type="AudioStream" id=9]
+[ext_resource path="res://assets/sounds/pickupCoin.wav" type="AudioStream" id=10]
 
 [node name="Player" instance=ExtResource( 2 )]
 collision_layer = 2
@@ -39,3 +41,9 @@ position = Vector2( 8, 0 )
 
 [node name="Camera2D" type="Camera2D" parent="." index="4"]
 current = true
+
+[node name="Hit" type="AudioStreamPlayer" parent="." index="6"]
+stream = ExtResource( 9 )
+
+[node name="PickUp" type="AudioStreamPlayer" parent="." index="7"]
+stream = ExtResource( 10 )

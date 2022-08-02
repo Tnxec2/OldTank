@@ -18,5 +18,6 @@ func _on_Map_game_over(win: bool):
 
 
 func _on_GameOver_new_game_pressed():
-	get_tree().reload_current_scene()
 	G.located_forts = []
+	get_tree().change_scene("res://StartScreen.tscn")
+

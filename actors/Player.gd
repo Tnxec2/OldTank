@@ -41,6 +41,17 @@ func control(delta):
 func drive_to(target_vector: Vector2) -> void:
 	look_at(position+target_vector)
 	velocity = target_vector * speed
+	
+
+func take_damage(amount):
+	if !alive:
+		return
+	health -= amount
+	health = max(health, 0)
+	emit_signal('health_changed', health * 100/max_health)
+	$Hit.play()
+	if health <= 0:
+		explode()
 
 
 func shot_to(position: Vector2, bulletType: int, target: Node2D = null):
@@ -73,7 +84,7 @@ func setBomb():
 
 
 func put_pickup(type: int, amount: int):
-	print('put_pickup', type, amount)
+	$PickUp.play()
 	match(type):
 		PickupTypes.Health:
 			health += amount

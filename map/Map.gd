@@ -267,6 +267,7 @@ func game_over(win: bool):
 	game_over = true
 	player.queue_free()
 	emit_signal("game_over", win)
+	$GameOver.play()
 	
 
 func _on_Body_clicked(body):
