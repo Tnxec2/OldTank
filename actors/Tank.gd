@@ -18,6 +18,9 @@ var can_shoot = true
 var alive = true
 var health
 
+var is_player = false
+
+
 func _ready():
 	health = max_health
 	emit_signal("health_changed", health)
@@ -72,12 +75,16 @@ func explode():
 	$Explosion.show()
 	$Explosion.play()
 	emit_signal('dead')
-
+	
 
 func _on_GunTimer_timeout():
 	can_shoot = true
 
 
 func _on_Explosion_animation_finished():
-	queue_free()
+	print(is_player)
+	if !is_player:
+		queue_free()
+	else:
+		$Explosion.hide()
 

@@ -58,7 +58,7 @@ func _ready():
 	spawn_forts()
 	if G.difficulty > 0:
 		spawn_radars()
-		
+	
 	rand_player_position()
 	
 	spawn_hills()
@@ -265,13 +265,14 @@ func _unhandled_input(event):
 
 func game_over(win: bool):
 	game_over = true
-	player.queue_free()
-	emit_signal("game_over", win)
 	$GameOver.play()
-	
+	yield(get_tree().create_timer(3.0), "timeout")
+	emit_signal("game_over", win)
+
 
 func _on_Body_clicked(body):
-	last_clicked_body = body
+	if !game_over:
+		last_clicked_body = body
 
 
 func _on_Truck_drop_object(type, pickup_amount, position):

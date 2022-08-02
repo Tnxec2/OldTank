@@ -39,11 +39,11 @@ region_rect = Rect2( 16, 0, 16, 16 )
 [node name="Muzzle" parent="Turret" index="0"]
 position = Vector2( 8, 0 )
 
-[node name="Camera2D" type="Camera2D" parent="." index="4"]
-current = true
-
-[node name="Hit" type="AudioStreamPlayer" parent="." index="6"]
+[node name="Hit" type="AudioStreamPlayer" parent="." index="5"]
 stream = ExtResource( 9 )
 
-[node name="PickUp" type="AudioStreamPlayer" parent="." index="7"]
+[node name="PickUp" type="AudioStreamPlayer" parent="." index="6"]
 stream = ExtResource( 10 )
+
+[node name="Camera2D" type="Camera2D" parent="." index="7"]
+current = true

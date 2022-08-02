@@ -23,12 +23,15 @@ var turret_rotate_timer = 0
 
 
 func _ready():
+	is_player = true
 	emit_signal("change_bomb_count", bomb_count)
 	emit_signal("change_cannon_count", cannone_count)
 	emit_signal("change_missile_count", missile_count)
 
 
 func control(delta):
+	if !alive:
+		return
 	position.x = clamp(position.x, $Camera2D.limit_left + $Body.texture.get_width()/2, $Camera2D.limit_right - $Body.texture.get_width()/2)
 	position.y = clamp(position.y, $Camera2D.limit_top + $Body.texture.get_height()/2, $Camera2D.limit_bottom - $Body.texture.get_height()/2)
 	if turret_rotate_timer > 0:
@@ -39,6 +42,8 @@ func control(delta):
 
 
 func drive_to(target_vector: Vector2) -> void:
+	if !alive:
+		return
 	look_at(position+target_vector)
 	velocity = target_vector * speed
 	
@@ -55,6 +60,8 @@ func take_damage(amount):
 
 
 func shot_to(position: Vector2, bulletType: int, target: Node2D = null):
+	if !alive:
+		return
 	turret_rotate_timer = TURRET_ROTATE_BACK_DELAY
 	$Turret.look_at(position)
 	var dir = Vector2(1, 0).rotated($Turret.global_rotation)
@@ -76,6 +83,8 @@ func shot_to(position: Vector2, bulletType: int, target: Node2D = null):
 	
 	
 func setBomb():
+	if !alive:
+		return
 	if bomb_count <= 0:
 		return
 	bomb_count -= 1
@@ -84,6 +93,8 @@ func setBomb():
 
 
 func put_pickup(type: int, amount: int):
+	if !alive:
+		return
 	$PickUp.play()
 	match(type):
 		PickupTypes.Health:
