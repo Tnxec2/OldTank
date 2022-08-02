@@ -7,6 +7,8 @@ var wall_h = preload("res://staticobjects/FortWallH.tscn")
 var wall_v = preload("res://staticobjects/FortWallV.tscn")
 var flag = preload("res://pickups/Flag.tscn")
 
+var located_from_player = false
+var flag_instance = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -83,7 +85,16 @@ func init_flag():
 	var f = flag.instance()
 	f.position = Vector2(32, 24)
 	add_child(f)
-
+	flag_instance = f
 
 func _on_Tower_shoot(bullet, muzzle_position, target_dir):
 	emit_signal("shoot", bullet, muzzle_position, target_dir)
+
+
+func _on_VisibilityNotifier2D_screen_entered():
+	if located_from_player:
+		return
+	var array = G.located_forts
+	array.append(flag_instance.global_position)
+	G.located_forts = array
+	located_from_player = true

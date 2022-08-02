@@ -24,12 +24,12 @@ func seek():
 
 
 func _process(delta):
-	if target != null &&is_instance_valid(target):
+	if target != null && is_instance_valid(target):
 		acceleration += seek()
 		velocity += acceleration * delta
 		velocity = velocity.clamped(speed)
 		rotation = velocity.angle()
-	position += velocity * delta	
+	position += velocity * delta
 
 
 func explode():
@@ -53,11 +53,16 @@ func _on_Bullet_body_entered(body):
 
 
 func take_damage(damage):
-	explode()
-	
-	
+	queue_free()
+
+
 func _on_Explosion_animation_finished():
 	queue_free()
 
+
 func _on_LifeTime_timeout():
 	queue_free()
+
+
+func _on_Bullet_area_entered(area):
+	_on_Bullet_body_entered(area)

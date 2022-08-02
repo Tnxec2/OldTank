@@ -21,7 +21,6 @@ func _on_VBoxContainer_shot_pressed():
 	emit_signal("shot_pressed")
 
 func _on_Player_change_bomb_count(value: int):
-	print(str(value))
 	$Control/VBoxContainer/BombContainer/Background/Label.text = str(value)
 
 func _on_Player_change_cannon_count(value: int):

@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/ui/minimap_fort_point.png" type="Texture" id=1]
+[ext_resource path="res://assets/ui/minimap.png" type="Texture" id=2]
+[ext_resource path="res://assets/ui/minimap_player_point.png" type="Texture" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends MarginContainer
+
+
+onready var map = $Background
+onready var player_marker = $PlayerMarker
+onready var fort_marker = $FortMarker
+
+var grid_scale
+
+
+
+func _ready():
+	player_marker.position = map.rect_size / 2
+	grid_scale = map.rect_size / G.map_size
+	fort_marker.hide()
+
+func _process(delta):
+	if !G.player || !is_instance_valid((G.player)):
+		return
+	player_marker.position = G.player.global_position * grid_scale
+
+	for i in range(G.located_forts.size()):
+		var new_marker = fort_marker.duplicate()
+		new_marker.position = G.located_forts[i] * grid_scale
+		new_marker.show()
+		add_child(new_marker)
+	G.located_forts = []
+"
+
+[node name="MiniMap" type="MarginContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = SubResource( 1 )
+
+[node name="Background" type="TextureRect" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 2 )
+
+[node name="PlayerMarker" type="Sprite" parent="."]
+position = Vector2( 27, 9 )
+texture = ExtResource( 3 )
+
+[node name="FortMarker" type="Sprite" parent="."]
+position = Vector2( 11, 12 )
+texture = ExtResource( 1 )

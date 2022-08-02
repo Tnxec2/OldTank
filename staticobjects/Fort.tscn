@@ -14,3 +14,8 @@ script = ExtResource( 5 )
 position = Vector2( 32, 24 )
 shape = SubResource( 1 )
 disabled = true
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+rect = Rect2( 0, 0, 64, 48 )
+
+[connection signal="screen_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]

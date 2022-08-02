@@ -45,6 +45,7 @@ margin_bottom = 13.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = ExtResource( 1 )
 text = "Game Over"
+align = 1
 
 [node name="NewGame" type="MarginContainer" parent="Box/VBoxContainer"]
 margin_top = 21.0

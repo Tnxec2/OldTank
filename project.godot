@@ -33,8 +33,12 @@ _global_script_class_icons={
 [application]
 
 config/name="OldTank"
-run/main_scene="res://Game.tscn"
+run/main_scene="res://StartScreen.tscn"
 config/icon="res://assets/icon.png"
+
+[autoload]
+
+G="*res://Globals.gd"
 
 [display]
 
@@ -85,6 +89,7 @@ pointing/emulate_touch_from_mouse=true
 2d_physics/layer_5="objects"
 2d_physics/layer_6="trucks"
 2d_physics/layer_7="fort"
+2d_physics/layer_8="air"
 
 [physics]
 

@@ -71,7 +71,6 @@ func _process(delta):
 		if target_dir.dot(current_dir) > 0.9:
 			#TODO: activate shoot
 			shoot(gun_shots, gun_spread, turret_target)
-			pass
 	else:
 		$Turret.global_rotation = global_rotation
 		

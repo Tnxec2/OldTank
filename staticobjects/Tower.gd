@@ -29,7 +29,6 @@ func take_damage(damage: int):
 func shoot():
 	if turret_target:
 		var target_dir = (turret_target.global_position - global_position).normalized()
-		prints("tower_shoot")
 		emit_signal('shoot', bullet, muzzle_position, target_dir)
 		gun_timer.start()
 

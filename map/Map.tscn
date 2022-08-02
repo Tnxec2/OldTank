@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://map/Map.gd" type="Script" id=1]
+[ext_resource path="res://assets/textures/aim.png" type="Texture" id=2]
 [ext_resource path="res://assets/terrain_tileset.tres" type="TileSet" id=3]
 [ext_resource path="res://map/TileMap.gd" type="Script" id=4]
 
@@ -13,4 +14,21 @@ cell_size = Vector2( 16, 16 )
 cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
 format = 1
 script = ExtResource( 4 )
-map_size = 40
+
+[node name="TruckTimer" type="Timer" parent="."]
+wait_time = 10.0
+autostart = true
+
+[node name="HelliTimer" type="Timer" parent="."]
+wait_time = 20.0
+
+[node name="PlaneTimer" type="Timer" parent="."]
+wait_time = 40.0
+
+[node name="MissileAim" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 2 )
+
+[connection signal="timeout" from="TruckTimer" to="." method="_on_TruckTimer_timeout"]
+[connection signal="timeout" from="HelliTimer" to="." method="_on_HelliTimer_timeout"]
+[connection signal="timeout" from="PlaneTimer" to="." method="_on_PlaneTimer_timeout"]
