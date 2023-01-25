@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://ui/hud.tscn" type="PackedScene" id=2]
 [ext_resource path="res://ui/gameover.tscn" type="PackedScene" id=3]
 [ext_resource path="res://actors/Player.tscn" type="PackedScene" id=4]
 [ext_resource path="res://map/Map.tscn" type="PackedScene" id=5]
+[ext_resource path="res://ui/Paused.tscn" type="PackedScene" id=6]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -12,11 +13,13 @@ script = ExtResource( 1 )
 [node name="Map" parent="." instance=ExtResource( 5 )]
 
 [node name="Player" parent="Map" instance=ExtResource( 4 )]
-missile_count = 150
+
+[node name="GameOver" parent="." instance=ExtResource( 3 )]
 
 [node name="HUD" parent="." instance=ExtResource( 2 )]
 
-[node name="GameOver" parent="." instance=ExtResource( 3 )]
+[node name="Paused" parent="." instance=ExtResource( 6 )]
+pause_mode = 2
 
 [connection signal="change_bullet_type" from="Map" to="HUD" method="_on_Map_change_bullet_type"]
 [connection signal="change_count_enemys" from="Map" to="HUD" method="_on_Map_change_count_enemys"]
@@ -29,9 +32,11 @@ missile_count = 150
 [connection signal="health_changed" from="Map/Player" to="HUD" method="_on_Player_health_changed"]
 [connection signal="set_bomb" from="Map/Player" to="Map" method="_on_Player_set_bomb"]
 [connection signal="shoot" from="Map/Player" to="Map" method="_on_Player_shoot"]
+[connection signal="new_game_pressed" from="GameOver" to="." method="_on_GameOver_new_game_pressed"]
+[connection signal="new_game_pressed" from="GameOver" to="Map" method="_on_GameOver_new_game_pressed"]
 [connection signal="bomb_pressed" from="HUD" to="Map" method="_on_HUD_bomb_pressed"]
 [connection signal="cannon_pressed" from="HUD" to="Map" method="_on_HUD_cannon_pressed"]
 [connection signal="missile_pressed" from="HUD" to="Map" method="_on_HUD_missile_pressed"]
+[connection signal="pause_pressed" from="HUD" to="." method="_on_HUD_pause_pressed"]
 [connection signal="shot_pressed" from="HUD" to="Map" method="_on_HUD_shot_pressed"]
-[connection signal="new_game_pressed" from="GameOver" to="." method="_on_GameOver_new_game_pressed"]
-[connection signal="new_game_pressed" from="GameOver" to="Map" method="_on_GameOver_new_game_pressed"]
+[connection signal="quit" from="Paused" to="." method="_on_Paused_quit"]

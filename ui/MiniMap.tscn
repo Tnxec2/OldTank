@@ -37,11 +37,13 @@ func _process(delta):
 [node name="MiniMap" type="MarginContainer"]
 margin_right = 40.0
 margin_bottom = 40.0
+mouse_filter = 2
 script = SubResource( 1 )
 
 [node name="Background" type="TextureRect" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
+mouse_filter = 2
 texture = ExtResource( 2 )
 
 [node name="PlayerMarker" type="Sprite" parent="."]

@@ -6,6 +6,7 @@
 [ext_resource path="res://ui/gameover.gd" type="Script" id=4]
 
 [node name="GameOver" type="CanvasLayer"]
+pause_mode = 2
 script = ExtResource( 4 )
 
 [node name="Box" type="NinePatchRect" parent="."]

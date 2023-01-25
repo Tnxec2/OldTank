@@ -12,9 +12,16 @@ export (PackedScene) var Shot
 export (PackedScene) var Cannone
 export (PackedScene) var Missile
 
-export (int) var bomb_count
-export (int) var cannone_count
-export (int) var missile_count
+onready var camera = $Camera2D
+onready var turret = $Turret
+onready var muzzle = $Turret/Muzzle
+onready var sound_pickup = $Sounds/PickUpSound
+onready var sound_hit = $Sounds/HitSound
+
+
+var bomb_count
+var cannone_count
+var missile_count
 
 const PickupTypes = preload("res://pickups/PickupTypes.gd")
 
@@ -24,21 +31,26 @@ var turret_rotate_timer = 0
 
 func _ready():
 	is_player = true
+
+	bomb_count = 30
+	cannone_count = 30
+	missile_count = 15
+
 	emit_signal("change_bomb_count", bomb_count)
 	emit_signal("change_cannon_count", cannone_count)
 	emit_signal("change_missile_count", missile_count)
 
 
 func control(delta):
-	if !alive:
+	if !alive || G.game_over:
 		return
-	position.x = clamp(position.x, $Camera2D.limit_left + $Body.texture.get_width()/2, $Camera2D.limit_right - $Body.texture.get_width()/2)
-	position.y = clamp(position.y, $Camera2D.limit_top + $Body.texture.get_height()/2, $Camera2D.limit_bottom - $Body.texture.get_height()/2)
+	position.x = clamp(position.x, camera.limit_left + $Body.texture.get_width()/2, camera.limit_right - $Body.texture.get_width()/2)
+	position.y = clamp(position.y, camera.limit_top + $Body.texture.get_height()/2, camera.limit_bottom - $Body.texture.get_height()/2)
 	if turret_rotate_timer > 0:
 		turret_rotate_timer -= delta
 	elif turret_rotate_timer < 0:
 		turret_rotate_timer = 0
-		$Turret.set_rotation(0)
+		turret.set_rotation(0)
 
 
 func drive_to(target_vector: Vector2) -> void:
@@ -49,41 +61,42 @@ func drive_to(target_vector: Vector2) -> void:
 	
 
 func take_damage(amount):
-	if !alive:
+	if !alive || G.game_over:
 		return
 	health -= amount
 	health = max(health, 0)
 	emit_signal('health_changed', health * 100/max_health)
-	$Hit.play()
+	sound_hit.play()
 	if health <= 0:
 		explode()
 
 
 func shot_to(position: Vector2, bulletType: int, target: Node2D = null):
-	if !alive:
+	if !alive || G.game_over:
 		return
 	turret_rotate_timer = TURRET_ROTATE_BACK_DELAY
-	$Turret.look_at(position)
-	var dir = Vector2(1, 0).rotated($Turret.global_rotation)
+	turret.look_at(position)
+	#var dir = Vector2(1, 0).rotated(turret.global_rotation)
+	var dir = (muzzle.global_position - global_position).normalized()
 	match(bulletType):
 		0:
-			emit_signal('shoot', Shot, $Turret/Muzzle.global_position, dir)
+			emit_signal('shoot', Shot, muzzle.global_position, dir)
 		1:
 			if cannone_count > 0:
 				cannone_count -= 1
 				emit_signal("change_cannon_count", cannone_count)
-				emit_signal('shoot', Cannone, $Turret/Muzzle.global_position, dir)
+				emit_signal('shoot', Cannone, muzzle.global_position, dir)
 		2:
 			if can_shoot && missile_count > 0:
 				can_shoot = false
 				$GunTimer.start()
 				missile_count -= 1
 				emit_signal("change_missile_count", missile_count)
-				emit_signal('shoot', Missile, $Turret/Muzzle.global_position, dir, target)
+				emit_signal('shoot', Missile, muzzle.global_position, dir, target)
 	
 	
 func setBomb():
-	if !alive:
+	if !alive || G.game_over:
 		return
 	if bomb_count <= 0:
 		return
@@ -93,9 +106,9 @@ func setBomb():
 
 
 func put_pickup(type: int, amount: int):
-	if !alive:
+	if !alive || G.game_over:
 		return
-	$PickUp.play()
+	sound_pickup.play()
 	match(type):
 		PickupTypes.Health:
 			health += amount

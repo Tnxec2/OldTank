@@ -6,3 +6,5 @@ var world_size = 0 # 0 - small, 1 - middle, 2 - big
 var player = null
 var map_size: Vector2 = Vector2()
 var located_forts: PoolVector2Array = PoolVector2Array()
+var game_over = false
+var win = false

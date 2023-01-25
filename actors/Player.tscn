@@ -22,9 +22,6 @@ Bomb = ExtResource( 5 )
 Shot = ExtResource( 7 )
 Cannone = ExtResource( 8 )
 Missile = ExtResource( 6 )
-bomb_count = 10
-cannone_count = 30
-missile_count = 15
 
 [node name="Body" parent="." index="0"]
 texture = ExtResource( 4 )
@@ -39,11 +36,11 @@ region_rect = Rect2( 16, 0, 16, 16 )
 [node name="Muzzle" parent="Turret" index="0"]
 position = Vector2( 8, 0 )
 
-[node name="Hit" type="AudioStreamPlayer" parent="." index="5"]
+[node name="Camera2D" type="Camera2D" parent="." index="5"]
+current = true
+
+[node name="HitSound" type="AudioStreamPlayer" parent="Sounds" index="0"]
 stream = ExtResource( 9 )
 
-[node name="PickUp" type="AudioStreamPlayer" parent="." index="6"]
+[node name="PickUpSound" type="AudioStreamPlayer" parent="Sounds" index="1"]
 stream = ExtResource( 10 )
-
-[node name="Camera2D" type="Camera2D" parent="." index="7"]
-current = true

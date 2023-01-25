@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 signal clicked()
 signal shoot(bullet, position, direction, target)
+signal dead
 
 onready var sprite = $Sprite
 onready var collisionShape = $CollisionShape2D
@@ -16,7 +17,8 @@ var speed = 50
 var velocity = Vector2()
 var acceleration = Vector2()
 var alive = true
-var healt = 50
+const MAX_HEALTH = 50
+var health = 0
 var can_shoot = true
 const STEER_FORCE = 0.5
 
@@ -27,6 +29,8 @@ var player = null
 var target = null
 
 func _ready():
+	$HealthBar.hide()
+	health = MAX_HEALTH
 	rand.randomize()
 	rand_position()
 
@@ -47,6 +51,7 @@ func rand_position():
 	global_position = Vector2(x, y)
 	randomRotate(dir)
 
+
 func randomRotate(dir: int):
 	var angle = 0
 	if dir == 0: # drive to right
@@ -64,17 +69,21 @@ func seek():
 
 
 func control(delta):
+	if health < MAX_HEALTH:
+		$HealthBar.set_global_position(Vector2(global_position.x-8, global_position.y-9))
+		$HealthBar.set_rotation(-rotation)
+		
 	if global_position.x > limits[1]+20 || global_position.x < limits[0]-20:
-		queue_free()
+		release()
 	if global_position.y > limits[3]+20 || global_position.y < limits[2]-20:
-		queue_free()
+		release()
 
 
 func _physics_process(delta):
 	if not alive:
 		return
 	control(delta)
-	if player != null && is_instance_valid(player):
+	if player != null && is_instance_valid(player) && !G.game_over:
 		if player_located:
 			acceleration += seek()
 		velocity += acceleration * delta
@@ -85,7 +94,7 @@ func _physics_process(delta):
 
 
 func shoot():
-	if alive && can_shoot && target && is_instance_valid(player):
+	if alive && can_shoot && target && is_instance_valid(player) && !G.game_over:
 		can_shoot = false
 		$GunTimer.start()
 		var dir = (target.global_position - global_position).normalized()
@@ -93,8 +102,10 @@ func shoot():
 	
 	
 func take_damage(damage):
-	healt -= damage
-	if healt <= 0:
+	health -= damage
+	$HealthBar.show()
+	$HealthBar.rect_size.x = 16 * health / MAX_HEALTH
+	if health <= 0:
 		explode()
 
 
@@ -105,6 +116,12 @@ func explode():
 	sprite.hide()
 	explosion.show()
 	explosion.play()
+	emit_signal("dead")
+
+
+func release():
+	emit_signal("dead")
+	queue_free()
 
 
 func _on_Explosion_animation_finished():
@@ -123,3 +140,8 @@ func _on_DetectRadius_body_exited(body):
 
 func _on_GunTimer_timeout():
 	can_shoot = true
+
+
+func _on_Helli_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton:
+		emit_signal("clicked")

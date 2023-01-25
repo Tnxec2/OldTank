@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://ui/buttons.tscn" type="PackedScene" id=1]
 [ext_resource path="res://ui/hud.gd" type="Script" id=2]
+[ext_resource path="res://ui/buttons_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/ui/label_dead.png" type="Texture" id=4]
+[ext_resource path="res://assets/ui/label_live.png" type="Texture" id=5]
+[ext_resource path="res://assets/ui/pause.png" type="Texture" id=6]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource( 2 )
@@ -9,22 +13,95 @@ script = ExtResource( 2 )
 [node name="Control" type="Control" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -76.0
-size_flags_horizontal = 3
+margin_left = -56.0
+margin_bottom = 171.0
+rect_min_size = Vector2( 56, 0 )
+mouse_filter = 2
 size_flags_vertical = 3
 
 [node name="VBoxContainer" parent="Control" instance=ExtResource( 1 )]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 16.0
-margin_bottom = 56.0
-custom_constants/separation = 8
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 48.0
+margin_bottom = -3.0
+custom_constants/separation = 4
 
-[node name="Line2D" type="Line2D" parent="Control"]
-points = PoolVector2Array( 0, 0, 0, 2000 )
-width = 0.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 92.0
+margin_bottom = 24.0
+mouse_filter = 2
+
+[node name="LifeContainer" type="MarginContainer" parent="HBoxContainer"]
+margin_right = 40.0
+margin_bottom = 16.0
+mouse_filter = 2
+
+[node name="LifeIcon" type="TextureRect" parent="HBoxContainer/LifeContainer"]
+margin_right = 40.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 40, 16 )
+mouse_filter = 2
+texture = ExtResource( 5 )
+
+[node name="Label" type="Label" parent="HBoxContainer/LifeContainer/LifeIcon"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -24.0
+margin_top = -5.0
+margin_bottom = 8.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 3 )
+text = "999"
+align = 1
+valign = 1
+
+[node name="EnemysContainer" type="MarginContainer" parent="HBoxContainer"]
+margin_left = 44.0
+margin_right = 84.0
+margin_bottom = 16.0
+mouse_filter = 2
+
+[node name="EnemysIcon" type="TextureRect" parent="HBoxContainer/EnemysContainer"]
+margin_right = 40.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 40, 16 )
+mouse_filter = 2
+texture = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="HBoxContainer/EnemysContainer/EnemysIcon"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -24.0
+margin_top = -5.0
+margin_bottom = 8.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 3 )
+text = "999"
+align = 1
+valign = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -72.0
+margin_top = 8.0
+margin_right = -56.0
+margin_bottom = 26.0
+
+[node name="TextureButton" type="TextureButton" parent="MarginContainer"]
+pause_mode = 2
+margin_right = 16.0
+margin_bottom = 18.0
+texture_normal = ExtResource( 6 )
 
 [connection signal="bomb_pressed" from="Control/VBoxContainer" to="." method="_on_VBoxContainer_bomb_pressed"]
 [connection signal="cannon_pressed" from="Control/VBoxContainer" to="." method="_on_VBoxContainer_cannon_pressed"]
 [connection signal="missile_pressed" from="Control/VBoxContainer" to="." method="_on_VBoxContainer_missile_pressed"]
 [connection signal="shot_pressed" from="Control/VBoxContainer" to="." method="_on_VBoxContainer_shot_pressed"]
+[connection signal="pressed" from="MarginContainer/TextureButton" to="." method="_on_TextureButton_pressed"]

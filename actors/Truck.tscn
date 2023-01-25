@@ -24,6 +24,14 @@ visible = false
 frames = ExtResource( 2 )
 
 [node name="StuckTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="HealthBar" type="ColorRect" parent="."]
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = -7.0
+color = Color( 0, 0, 0, 1 )
 
 [connection signal="input_event" from="." to="." method="_on_Truck_input_event"]
 [connection signal="animation_finished" from="Explosion" to="." method="_on_Explosion_animation_finished"]

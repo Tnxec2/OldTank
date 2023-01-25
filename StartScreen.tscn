@@ -10,12 +10,14 @@ script/source = "extends Node2D
 var button_selected = preload(\"res://assets/ui/button_square_9_selected.png\")
 var button_normal = preload(\"res://assets/ui/button_square_9.png\")
 
-onready var dif_easy_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerEasy/Background
-onready var dif_medium_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerMedium/Background
-onready var dif_hard_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerHard/Background
-onready var size_small_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerSmall/Background
-onready var size_middle_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerMiddle/Background
-onready var size_big_button = $CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerBig/Background
+onready var dif_easy_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerEasy/Background
+onready var dif_medium_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerMedium/Background
+onready var dif_hard_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerHard/Background
+onready var size_small_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerSmall/Background
+onready var size_middle_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerMiddle/Background
+onready var size_big_button = $CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerBig/Background
+
+const SETTINGS_FILE_NAME = \"user://savesettings.json\"
 
 var difficulty = 0
 var size = 0
@@ -23,40 +25,63 @@ var size = 0
 
 func _ready():
 	VisualServer.set_default_clear_color(Color(1,1,1)) # set background to white
-	change_difficulty(0)
-	change_size(0)
+	var file = File.new()
+	if file.file_exists(SETTINGS_FILE_NAME):
+		file.open(SETTINGS_FILE_NAME, File.READ)
+		var data = parse_json(file.get_as_text())
+		file.close()
+		change_difficulty(int(data.difficulty))
+		change_size(int(data.size))
+	else:
+		change_difficulty(0)
+		change_size(0)
+
+
+func save_settings():
+	G.world_size = size
+	G.difficulty = difficulty
+	var data = {
+		\"difficulty\": difficulty,
+		\"size\": size
+	}
+	
+	var file = File.new()
+	file.open(SETTINGS_FILE_NAME, File.WRITE)
+	var json = to_json(data)
+	file.store_line(json)
+	file.close()
 
 
 func change_difficulty(value):
-	if value > 2 || value < 0:
-		return
-	difficulty = value
-	dif_easy_button.texture = button_normal
-	dif_medium_button.texture = button_normal
-	dif_hard_button.texture = button_normal
-	match(difficulty):
-		0:
-			dif_easy_button.texture = button_selected
-		1:
-			dif_medium_button.texture = button_selected
-		2:
-			dif_hard_button.texture = button_selected
+	difficulty = clamp(value, 0, 2)
+	if difficulty == 0:
+		dif_easy_button.texture = button_selected
+	else:
+		dif_easy_button.texture = button_normal
+	if difficulty == 1:
+		dif_medium_button.texture = button_selected
+	else:
+		dif_medium_button.texture = button_normal
+	if difficulty == 2:
+		dif_hard_button.texture = button_selected
+	else:
+		dif_hard_button.texture = button_normal
 
 
 func change_size(value):
-	if value > 2 || value < 0:
-		return
-	size = value
-	size_small_button.texture = button_normal
-	size_middle_button.texture = button_normal
-	size_big_button.texture = button_normal
-	match(size):
-		0:
-			size_small_button.texture = button_selected
-		1:
-			size_middle_button.texture = button_selected
-		2:
-			size_big_button.texture = button_selected
+	size = clamp(value, 0, 2)
+	if size == 0:
+		size_small_button.texture = button_selected
+	else:
+		size_small_button.texture = button_normal
+	if size == 1:
+		size_middle_button.texture = button_selected
+	else:
+		size_middle_button.texture = button_normal
+	if size == 2:
+		size_big_button.texture = button_selected
+	else:
+		size_big_button.texture = button_normal
 
 
 func _on_ButtonEasy_pressed() -> void:
@@ -85,13 +110,17 @@ func _on_ButtonBig_pressed() -> void:
 
 func _on_NewGameButton_pressed() -> void:
 	prints(\"difficulty\", difficulty, \"world_size\", size)
-	G.world_size = size
-	G.difficulty = difficulty
+	save_settings()
 	get_tree().change_scene(\"res://Main.tscn\")
 
 
 func _on_QuitButton_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_HelpButton_pressed() -> void:
+	save_settings()
+	get_tree().change_scene(\"res://HelpScreen.tscn\")
 "
 
 [node name="StartScreen" type="Node2D"]
@@ -126,44 +155,83 @@ margin_right = 78.0
 margin_bottom = 62.0
 custom_constants/separation = 8
 
-[node name="GameOver" type="CenterContainer" parent="CanvasLayer/Box/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Box/VBoxContainer"]
 margin_right = 156.0
-margin_bottom = 13.0
+margin_bottom = 16.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/GameOver"]
-margin_left = 64.0
-margin_right = 92.0
-margin_bottom = 13.0
+[node name="Title" type="CenterContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer"]
+margin_right = 120.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 120, 0 )
+
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Title"]
+margin_left = 46.0
+margin_top = 1.0
+margin_right = 74.0
+margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = ExtResource( 3 )
 text = "Tank"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Box/VBoxContainer"]
-margin_top = 21.0
+[node name="Help" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer"]
+margin_left = 124.0
 margin_right = 156.0
-margin_bottom = 88.0
+margin_bottom = 16.0
+
+[node name="NinePatchRectHelp" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Help"]
+margin_right = 32.0
+margin_bottom = 16.0
+rect_min_size = Vector2( 32, 16 )
+texture = ExtResource( 1 )
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="HelpButton" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Help/NinePatchRectHelp"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Help/NinePatchRectHelp"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -28.0
+margin_top = -13.0
+margin_right = 28.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 3 )
+text = "?"
+align = 1
+valign = 1
+
+[node name="SettingsContainer" type="HBoxContainer" parent="CanvasLayer/Box/VBoxContainer"]
+margin_top = 24.0
+margin_right = 156.0
+margin_bottom = 91.0
 custom_constants/separation = 16
 
-[node name="Difficulty" type="VBoxContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer"]
+[node name="Difficulty" type="VBoxContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer"]
 margin_right = 70.0
 margin_bottom = 67.0
 rect_min_size = Vector2( 70, 0 )
 custom_constants/separation = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty"]
 margin_right = 70.0
 margin_bottom = 13.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = ExtResource( 3 )
 text = "Difficulty"
 
-[node name="ContainerEasy" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty"]
+[node name="ContainerEasy" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty"]
 margin_top = 15.0
 margin_right = 70.0
 margin_bottom = 31.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerEasy"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerEasy"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -173,11 +241,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonEasy" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerEasy/Background"]
+[node name="ButtonEasy" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerEasy/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerEasy/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerEasy/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -191,12 +259,12 @@ text = "Easy"
 align = 1
 valign = 1
 
-[node name="ContainerMedium" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty"]
+[node name="ContainerMedium" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty"]
 margin_top = 33.0
 margin_right = 70.0
 margin_bottom = 49.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerMedium"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerMedium"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -206,11 +274,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonMedium" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerMedium/Background"]
+[node name="ButtonMedium" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerMedium/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerMedium/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerMedium/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -224,12 +292,12 @@ text = "Medium"
 align = 1
 valign = 1
 
-[node name="ContainerHard" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty"]
+[node name="ContainerHard" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty"]
 margin_top = 51.0
 margin_right = 70.0
 margin_bottom = 67.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerHard"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerHard"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -239,11 +307,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonHard" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerHard/Background"]
+[node name="ButtonHard" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerHard/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerHard/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerHard/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -257,26 +325,26 @@ text = "Hard"
 align = 1
 valign = 1
 
-[node name="GridSize" type="VBoxContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer"]
+[node name="GridSize" type="VBoxContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer"]
 margin_left = 86.0
 margin_right = 156.0
 margin_bottom = 67.0
 rect_min_size = Vector2( 70, 0 )
 custom_constants/separation = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize"]
 margin_right = 70.0
 margin_bottom = 13.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_fonts/font = ExtResource( 3 )
 text = "World size"
 
-[node name="ContainerSmall" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize"]
+[node name="ContainerSmall" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize"]
 margin_top = 15.0
 margin_right = 70.0
 margin_bottom = 31.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerSmall"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerSmall"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -286,11 +354,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonSmall" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerSmall/Background"]
+[node name="ButtonSmall" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerSmall/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerSmall/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerSmall/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -304,12 +372,12 @@ text = "40x40"
 align = 1
 valign = 1
 
-[node name="ContainerMiddle" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize"]
+[node name="ContainerMiddle" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize"]
 margin_top = 33.0
 margin_right = 70.0
 margin_bottom = 49.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerMiddle"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerMiddle"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -319,11 +387,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonMiddle" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerMiddle/Background"]
+[node name="ButtonMiddle" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerMiddle/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerMiddle/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerMiddle/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -337,12 +405,12 @@ text = "80x80"
 align = 1
 valign = 1
 
-[node name="ContainerBig" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize"]
+[node name="ContainerBig" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize"]
 margin_top = 51.0
 margin_right = 70.0
 margin_bottom = 67.0
 
-[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerBig"]
+[node name="Background" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerBig"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 40, 16 )
@@ -352,11 +420,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="ButtonBig" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerBig/Background"]
+[node name="ButtonBig" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerBig/Background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerBig/Background"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerBig/Background"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -370,18 +438,18 @@ text = "120x120"
 align = 1
 valign = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Box/VBoxContainer"]
-margin_top = 96.0
+[node name="ButtonsContainer" type="HBoxContainer" parent="CanvasLayer/Box/VBoxContainer"]
+margin_top = 99.0
 margin_right = 156.0
-margin_bottom = 112.0
+margin_bottom = 115.0
 custom_constants/separation = 16
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2"]
+[node name="Quit" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 70, 0 )
 
-[node name="NinePatchRectQuit" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer"]
+[node name="NinePatchRectQuit" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/Quit"]
 margin_right = 70.0
 margin_bottom = 16.0
 texture = ExtResource( 1 )
@@ -390,11 +458,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="QuitButton" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer/NinePatchRectQuit"]
+[node name="QuitButton" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/Quit/NinePatchRectQuit"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer/NinePatchRectQuit"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/Quit/NinePatchRectQuit"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -408,12 +476,12 @@ text = "Quit"
 align = 1
 valign = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2"]
+[node name="NewGame" type="MarginContainer" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer"]
 margin_left = 86.0
 margin_right = 156.0
 margin_bottom = 16.0
 
-[node name="NinePatchRectNewGame" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer2"]
+[node name="NinePatchRectNewGame" type="NinePatchRect" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/NewGame"]
 margin_right = 70.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 70, 16 )
@@ -423,11 +491,11 @@ patch_margin_top = 4
 patch_margin_right = 4
 patch_margin_bottom = 4
 
-[node name="NewGameButton" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer2/NinePatchRectNewGame"]
+[node name="NewGameButton" type="TextureButton" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/NewGame/NinePatchRectNewGame"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer2/NinePatchRectNewGame"]
+[node name="Label" type="Label" parent="CanvasLayer/Box/VBoxContainer/ButtonsContainer/NewGame/NinePatchRectNewGame"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -441,11 +509,12 @@ text = "New Game"
 align = 1
 valign = 1
 
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerEasy/Background/ButtonEasy" to="." method="_on_ButtonEasy_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerMedium/Background/ButtonMedium" to="." method="_on_ButtonMedium_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/Difficulty/ContainerHard/Background/ButtonHard" to="." method="_on_ButtonHard_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerSmall/Background/ButtonSmall" to="." method="_on_ButtonSmall_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerMiddle/Background/ButtonMiddle" to="." method="_on_ButtonMiddle_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/GridSize/ContainerBig/Background/ButtonBig" to="." method="_on_ButtonBig_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer/NinePatchRectQuit/QuitButton" to="." method="_on_QuitButton_pressed"]
-[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer2/MarginContainer2/NinePatchRectNewGame/NewGameButton" to="." method="_on_NewGameButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/HBoxContainer/Help/NinePatchRectHelp/HelpButton" to="." method="_on_HelpButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerEasy/Background/ButtonEasy" to="." method="_on_ButtonEasy_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerMedium/Background/ButtonMedium" to="." method="_on_ButtonMedium_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/Difficulty/ContainerHard/Background/ButtonHard" to="." method="_on_ButtonHard_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerSmall/Background/ButtonSmall" to="." method="_on_ButtonSmall_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerMiddle/Background/ButtonMiddle" to="." method="_on_ButtonMiddle_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/SettingsContainer/GridSize/ContainerBig/Background/ButtonBig" to="." method="_on_ButtonBig_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/ButtonsContainer/Quit/NinePatchRectQuit/QuitButton" to="." method="_on_QuitButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/Box/VBoxContainer/ButtonsContainer/NewGame/NinePatchRectNewGame/NewGameButton" to="." method="_on_NewGameButton_pressed"]

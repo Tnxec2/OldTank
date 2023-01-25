@@ -4,7 +4,8 @@ extends KinematicBody2D
 const PickupTypes = preload("res://pickups/PickupTypes.gd")
 
 signal drop_object(type)
-signal clicked()
+signal clicked
+signal dead
 
 onready var sprite = $Sprite
 onready var collisionShape = $CollisionShape2D
@@ -15,19 +16,23 @@ var limits = [0, 0, 0, 0] # left, right, top, bottom
 var speed = 10
 var velocity = Vector2()
 var alive = true
-var healt = 10
+const MAX_HEALTH = 10
+var health = 0
 var type = PickupTypes.Unknown
 var pickup_amount = 0
 var rand = RandomNumberGenerator.new()
 var old_position: Vector2 = Vector2.ZERO
+
 
 func _ready():
 	rand.randomize()
 	rand_type()
 	rand_position()
 	old_position = position
-	
-	
+	health = MAX_HEALTH
+	$HealthBar.hide()
+
+
 func rand_position():
 	var dir = rand.randi_range(0, 1) # 0 - right, 1 - left
 	var x = 0
@@ -41,7 +46,7 @@ func rand_position():
 
 
 func rand_type():
-	var t = rand.randi_range(0, 40)
+	var t = rand.randi_range(0, 30)
 	if t < 10:
 		type = PickupTypes.Health
 		pickup_amount = rand.randi_range(5, 10)
@@ -67,9 +72,14 @@ func randomRotate(dir: int):
 
 
 func control(delta):
+	if health < MAX_HEALTH:
+		$HealthBar.set_global_position(Vector2(global_position.x-8, global_position.y-9))
+		$HealthBar.set_rotation(-rotation)
 	if global_position.x > limits[1]+20 || global_position.x < limits[0]-20:
+		emit_signal("dead")
 		queue_free()
 	if global_position.y > limits[3]+20 || global_position.y < limits[2]-20:
+		emit_signal("dead")
 		queue_free()
 	
 	
@@ -77,12 +87,18 @@ func _physics_process(delta):
 	if not alive:
 		return
 	control(delta)
-	move_and_slide(velocity)
-	
-	
+	var collision = move_and_collide(velocity*delta)
+	if collision != null and collision.collider != G.player:
+		var angle = rand.randf_range(PI/4, PI/2)
+		velocity = velocity.rotated(angle)
+		rotate(angle)
+
+
 func take_damage(damage):
-	healt -= damage
-	if healt <= 0:
+	health -= damage
+	$HealthBar.show()
+	$HealthBar.rect_size.x = 16 * health / MAX_HEALTH
+	if health <= 0:
 		explode()
 		
 		
@@ -93,7 +109,8 @@ func explode():
 	explosion.show()
 	explosion.play()
 	emit_signal('drop_object', type, pickup_amount, position)
-
+	emit_signal("dead")
+	
 
 func _on_Explosion_animation_finished():
 	queue_free()

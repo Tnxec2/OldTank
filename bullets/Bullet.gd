@@ -15,15 +15,24 @@ func start(_position, _direction, _target=null):
 	rotation = _direction.angle()
 	velocity = _direction * speed
 	target = _target
+	init_missile()
 
+
+func init_missile():
+	pass
 
 func seek():
-	var desired = (target.position - position).normalized() * speed
+	var desired = (target.global_position - global_position).normalized() * speed
 	var steer = (desired - velocity).normalized() * steer_force
 	return steer
 
 
+func control(delta):
+	pass
+
+
 func _process(delta):
+	control(delta)
 	if target != null && is_instance_valid(target):
 		acceleration += seek()
 		velocity += acceleration * delta
@@ -33,12 +42,16 @@ func _process(delta):
 
 
 func explode():
+	release()
 	set_process(false)
 	velocity = Vector2.ZERO
 	$Sprite.hide()
 	$Explosion.show()
 	$Explosion.play()
 
+
+func release():
+	pass
 
 func _on_Bullet_body_entered(body):
 	$CollisionShape2D.disabled = true

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/kastenfrosch__success-jingle.ogg-433c08bd32a8465c1c9d76edc85d298c.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/kastenfrosch__success-jingle.ogg"
+dest_files=[ "res://.import/kastenfrosch__success-jingle.ogg-433c08bd32a8465c1c9d76edc85d298c.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

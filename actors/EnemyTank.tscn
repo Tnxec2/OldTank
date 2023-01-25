@@ -28,15 +28,18 @@ detect_radius = 100
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" parent="." index="1"]
+visible = false
 shape = SubResource( 1 )
 
 [node name="Turret" parent="." index="3"]
 texture = ExtResource( 3 )
 
 [node name="Muzzle" parent="Turret" index="0"]
+visible = false
 position = Vector2( 8, 0 )
 
 [node name="DetectRadius" type="Area2D" parent="." index="5"]
+visible = false
 collision_layer = 0
 collision_mask = 2
 
@@ -45,6 +48,13 @@ shape = SubResource( 2 )
 
 [node name="StuckTimer" type="Timer" parent="." index="6"]
 autostart = true
+
+[node name="HealthBar" type="ColorRect" parent="." index="8"]
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = -7.0
+color = Color( 0, 0, 0, 1 )
 
 [connection signal="input_event" from="." to="." method="_on_EnemyTank_input_event"]
 [connection signal="body_entered" from="DetectRadius" to="." method="_on_DetectRadius_body_entered"]
